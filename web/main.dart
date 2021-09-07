@@ -65,26 +65,54 @@ void populate_accordion(List<dynamic> materials) {
   for (dynamic material in materials) {
     if (!material.isEmpty) {
       var split_string = material.split(':');
-      print(split_string);
+
       var material_name = split_string[0];
       var material_amount = int.parse(split_string[1]);
+
       var matching_material = matched_material(material_name) as Material;
       matching_material.amount = material_amount;
       if (matching_material.kind == 'Encoded') {
-        encoded_accordion.children.add(ParagraphElement()
-          ..text = matching_material.name +
-              ': ' +
-              matching_material.amount.toString());
+        encoded_accordion.children.add(DivElement()
+          ..classes.add('form-check')
+          ..children.addAll([
+            CheckboxInputElement()
+              ..id = matching_material.name + '-checkbox'
+              ..classes.add('form-check-input'),
+            LabelElement()
+              ..text = matching_material.name +
+                  ': ' +
+                  matching_material.amount.toString()
+              ..htmlFor = matching_material.name + '-checkbox'
+              ..classes.add('form-check-label')
+          ]));
       } else if (matching_material.kind == 'Manufactured') {
-        manufactured_accordion.children.add(ParagraphElement()
-          ..text = matching_material.name +
-              ': ' +
-              matching_material.amount.toString());
+        manufactured_accordion.children.add(DivElement()
+          ..classes.add('form-check')
+          ..children.addAll([
+            CheckboxInputElement()
+              ..id = matching_material.name + '-checkbox'
+              ..classes.add('form-check-input'),
+            LabelElement()
+              ..text = matching_material.name +
+                  ': ' +
+                  matching_material.amount.toString()
+              ..htmlFor = matching_material.name + '-checkbox'
+              ..classes.add('form-check-label')
+          ]));
       } else if (matching_material.kind == 'Raw') {
-        raw_accordion.children.add(ParagraphElement()
-          ..text = matching_material.name +
-              ': ' +
-              matching_material.amount.toString());
+        raw_accordion.children.add(DivElement()
+          ..classes.add('form-check')
+          ..children.addAll([
+            CheckboxInputElement()
+              ..id = matching_material.name + '-checkbox'
+              ..classes.add('form-check-input'),
+            LabelElement()
+              ..text = matching_material.name +
+                  ': ' +
+                  matching_material.amount.toString()
+              ..htmlFor = matching_material.name + '-checkbox'
+              ..classes.add('form-check-label')
+          ]));
       }
     }
   }
