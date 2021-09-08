@@ -18,6 +18,9 @@ List<Material> generateMaterialList() {
   return newlist;
 }
 
+///
+///
+///
 class Material {
   String name;
   int grade;
@@ -33,11 +36,14 @@ class Material {
   );
 }
 
+///
+///
+///
 Material? matched_material(String material_name) {
   var material_list = generateMaterialList();
   try {
     for (var mat in material_list) {
-      if (mat.name == material_name) {
+      if (mat.name.replaceAll(' ', '') == material_name) {
         return mat;
       }
     }
@@ -46,6 +52,9 @@ Material? matched_material(String material_name) {
   }
 }
 
+///
+///
+///
 void read_textarea(Event event) {
   var textarea = querySelector('#materials') as TextAreaElement;
   var text = textarea.value;
@@ -56,62 +65,103 @@ void read_textarea(Event event) {
   }
 }
 
-void populate_accordion(List<dynamic> materials) {
+///
+///
+///
+void populate_accordion(List<dynamic> materials) async {
   var raw_accordion = querySelector('#raw-body') as DivElement;
   var encoded_accordion = querySelector('#encoded-body') as DivElement;
   var manufactured_accordion =
       querySelector('#manufactured-body') as DivElement;
 
   for (dynamic material in materials) {
-    if (!material.isEmpty) {
+    if (!material.isEmpty && material != null) {
+      if (!material.contains(':')) {
+        // checking the format of the text and break when the formatting criteria is not met
+        (querySelector('.title') as HeadingElement)
+            .children
+            .add(ParagraphElement()
+              ..id = 'info'
+              ..classes.addAll(['text-muted', 'mark', 'small'])
+              ..text = 'Please enter a valid material (ie Material: Amount)');
+        await Future.delayed(const Duration(seconds: 3));
+        (querySelector('#info') as ParagraphElement).remove();
+        break;
+      }
       var split_string = material.split(':');
 
-      var material_name = split_string[0];
+      String material_name = split_string[0].replaceAll(' ', '');
       var material_amount = int.parse(split_string[1]);
 
       var matching_material = matched_material(material_name) as Material;
       matching_material.amount = material_amount;
       if (matching_material.kind == 'Encoded') {
+        var partialID = matching_material.name.replaceAll(' ', '-');
         encoded_accordion.children.add(DivElement()
           ..classes.add('form-check')
+          ..id = partialID
           ..children.addAll([
             CheckboxInputElement()
-              ..id = matching_material.name + '-checkbox'
+              ..id = partialID + '-checkbox'
               ..classes.add('form-check-input'),
             LabelElement()
               ..text = matching_material.name +
                   ': ' +
-                  matching_material.amount.toString()
-              ..htmlFor = matching_material.name + '-checkbox'
+                  matching_material.amount.toString() +
+                  ' (${matching_material.section})'
+              ..htmlFor = partialID + '-checkbox'
               ..classes.add('form-check-label')
+              ..id = partialID + '-label'
+              ..onClick.listen((event) {
+                (querySelector('#${partialID + "-label"}') as LabelElement)
+                    .classes
+                    .toggle('completed');
+              })
           ]));
       } else if (matching_material.kind == 'Manufactured') {
+        var partialID = matching_material.name.replaceAll(' ', '-');
         manufactured_accordion.children.add(DivElement()
           ..classes.add('form-check')
+          ..id = partialID
           ..children.addAll([
             CheckboxInputElement()
-              ..id = matching_material.name + '-checkbox'
+              ..id = partialID + '-checkbox'
               ..classes.add('form-check-input'),
             LabelElement()
               ..text = matching_material.name +
                   ': ' +
-                  matching_material.amount.toString()
-              ..htmlFor = matching_material.name + '-checkbox'
+                  matching_material.amount.toString() +
+                  ' (${matching_material.section})'
+              ..htmlFor = partialID + '-checkbox'
               ..classes.add('form-check-label')
+              ..id = partialID + '-label'
+              ..onClick.listen((event) {
+                (querySelector('#${partialID + "-label"}') as LabelElement)
+                    .classes
+                    .toggle('completed');
+              })
           ]));
       } else if (matching_material.kind == 'Raw') {
+        var partialID = matching_material.name.replaceAll(' ', '-');
         raw_accordion.children.add(DivElement()
           ..classes.add('form-check')
           ..children.addAll([
             CheckboxInputElement()
-              ..id = matching_material.name + '-checkbox'
+              ..id = partialID + '-checkbox'
               ..classes.add('form-check-input'),
             LabelElement()
               ..text = matching_material.name +
                   ': ' +
-                  matching_material.amount.toString()
-              ..htmlFor = matching_material.name + '-checkbox'
+                  matching_material.amount.toString() +
+                  ' (${matching_material.section})'
+              ..htmlFor = partialID + '-checkbox'
               ..classes.add('form-check-label')
+              ..id = partialID + '-label'
+              ..onClick.listen((event) {
+                (querySelector('#${partialID + "-label"}') as LabelElement)
+                    .classes
+                    .toggle('completed');
+              })
           ]));
       }
     }
