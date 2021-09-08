@@ -1,3 +1,6 @@
+/// Material data scraped from Inara. The data is
+/// formatted into `name`, `grade`, `section` and `kind`
+/// properties.
 const String unprocessed = '''
 [
     {
